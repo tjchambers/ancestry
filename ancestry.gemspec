@@ -5,9 +5,9 @@ Gem::Specification.new do |s|
 
   s.version = '2.0.0'
 
-  s.author   = 'Stefan Kroes'
+  s.author   = 'Stefan Kroes [enhancements for multi-parent nodes by tjchambers]'
   s.email    = 's.a.kroes@gmail.com'
-  s.homepage = 'http://github.com/stefankroes/ancestry'
+  s.homepage = 'http://github.com/tjchambers/ancestry'
 
   s.files = [
     'ancestry.gemspec', 

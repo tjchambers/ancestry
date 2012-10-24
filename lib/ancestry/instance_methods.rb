@@ -69,12 +69,12 @@ module Ancestry
       # New records cannot have children
       raise Ancestry::AncestryException.new('No child ancestry for new record. Save record before performing tree operations.') if new_record?
 
-      if self.send("#{self.base_class.ancestry_column}_was").blank? then id.to_s else "#{self.send "#{self.base_class.ancestry_column}_was"}/#{id}" end
+      if self.send("#{self.base_class.ancestry_column}_was").blank? then id.to_s else "#{self.send "#{self.base_class.ancestry_column}_was"}".split(',').first + "/#{id}" end
     end
 
     # Ancestors
     def ancestor_ids
-      read_attribute(self.base_class.ancestry_column).to_s.split('/').map { |id| cast_primary_key(id) }
+      read_attribute(self.base_class.ancestry_column).to_s.split(%r|[,/]|).uniq.map { |id| cast_primary_key(id) }
     end
 
     def ancestor_conditions
@@ -114,17 +114,25 @@ module Ancestry
       self.parent = if parent_id.blank? then nil else unscoped_find(parent_id) end
     end
 
-    def parent_id
-      if ancestor_ids.empty? then nil else ancestor_ids.last end
+    def branches
+      if ancestor_ids.empty? then nil else read_attribute(self.base_class.ancestry_column).to_s.split(',') end
     end
 
-    def parent
-      if parent_id.blank? then nil else unscoped_find(parent_id) end
+    def parent_ids
+      if ancestor_ids.empty? then nil else branches.map { |branch| cast_primary_key(branch.split('/').last) } end
+    end
+
+    def parents
+      if is_root? then nil else unscoped_find(parent_ids) end
+    end
+
+    def has_parent?
+      !is_root?
     end
 
     # Root
     def root_id
-      if ancestor_ids.empty? then id else ancestor_ids.first end
+      if ancestor_ids.empty? then id else branches.first.split('/').first end
     end
 
     def root
@@ -135,51 +143,16 @@ module Ancestry
       read_attribute(self.base_class.ancestry_column).blank?
     end
 
-    # Children
-    def child_conditions
-      {self.base_class.ancestry_column => child_ancestry}
-    end
-
-    def children
-      self.base_class.scoped :conditions => child_conditions
-    end
-
-    def child_ids
-      children.all(:select => self.base_class.primary_key).map(&self.base_class.primary_key.to_sym)
-    end
-
-    def has_children?
-      self.children.exists?({})
-    end
-
-    def is_childless?
-      !has_children?
-    end
-
-    # Siblings
-    def sibling_conditions
-      {self.base_class.ancestry_column => read_attribute(self.base_class.ancestry_column)}
-    end
-
-    def siblings
-      self.base_class.scoped :conditions => sibling_conditions
-    end
-
-    def sibling_ids
-      siblings.all(:select => self.base_class.primary_key).collect(&self.base_class.primary_key.to_sym)
-    end
-
-    def has_siblings?
-      self.siblings.count > 1
-    end
-
-    def is_only_child?
-      !has_siblings?
-    end
 
     # Descendants
     def descendant_conditions
-      ["#{self.base_class.table_name}.#{self.base_class.ancestry_column} like ? or #{self.base_class.table_name}.#{self.base_class.ancestry_column} = ?", "#{child_ancestry}/%", child_ancestry]
+      column = "#{self.base_class.table_name}.#{self.base_class.ancestry_column}"
+      lookup = if has_parent? then "%/#{id}" else "#{id}" end
+      ["#{column} like ?
+        or #{column} like ?
+        or #{column} like ?
+        or #{column} like ?
+        or #{column} = ?", "#{lookup}","#{lookup}/%", "#{lookup},%", ",#{id}", "#{id}"]
     end
 
     def descendants depth_options = {}
@@ -234,7 +207,7 @@ module Ancestry
     end
     
     # basically validates the ancestry, but also applied if validation is
-    # bypassed to determine if chidren should be affected
+    # bypassed to determine if children should be affected
     def sane_ancestry?
       ancestry.nil? || (ancestry.to_s =~ Ancestry::ANCESTRY_PATTERN && !ancestor_ids.include?(self.id))
     end
