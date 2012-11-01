@@ -82,7 +82,7 @@ module Ancestry
     end
 
     def ancestors depth_options = {}
-      self.base_class.scope_depth(depth_options, depth).ordered_by_ancestry.scoped :conditions => ancestor_conditions
+      self.base_class.scope_depth(depth_options, depth).scoped :conditions => ancestor_conditions
     end
 
     def path_ids
@@ -94,7 +94,19 @@ module Ancestry
     end
 
     def path depth_options = {}
-      self.base_class.scope_depth(depth_options, depth).ordered_by_ancestry.scoped :conditions => path_conditions
+      self.base_class.scope_depth(depth_options, depth).scoped :conditions => path_conditions
+    end
+
+    def lineage_ids
+      ancestor_ids + subtree_ids
+    end
+
+    def lineage_conditions
+      {self.base_class.primary_key => lineage_ids}
+    end
+
+    def lineage depth_options = {}
+      self.base_class.scope_depth(depth_options, depth).scoped :conditions => lineage_conditions
     end
 
     def depth
@@ -156,7 +168,7 @@ module Ancestry
     end
 
     def descendants depth_options = {}
-      self.base_class.ordered_by_ancestry.scope_depth(depth_options, depth).scoped :conditions => descendant_conditions
+      self.base_class.scope_depth(depth_options, depth).scoped :conditions => descendant_conditions
     end
 
     def descendant_ids depth_options = {}
@@ -165,11 +177,18 @@ module Ancestry
 
     # Subtree
     def subtree_conditions
-      ["#{self.base_class.table_name}.#{self.base_class.primary_key} = ? or #{self.base_class.table_name}.#{self.base_class.ancestry_column} like ? or #{self.base_class.table_name}.#{self.base_class.ancestry_column} = ?", self.id, "#{child_ancestry}/%", child_ancestry]
-    end
+      column = "#{self.base_class.table_name}.#{self.base_class.ancestry_column}"
+      lookup = if has_parent? then "%/#{id}" else "#{id}" end
+      ["#{column} like ?
+        or #{column} like ?
+        or #{column} like ?
+        or #{column} like ?
+        or #{column} = ?
+        or #{self.base_class.table_name}.#{self.base_class.primary_key} = ?", "#{lookup}","#{lookup}/%", "#{lookup},%", ",#{id}", "#{id}", "#{id}"]
+     end
 
     def subtree depth_options = {}
-      self.base_class.ordered_by_ancestry.scope_depth(depth_options, depth).scoped :conditions => subtree_conditions
+      self.base_class.scope_depth(depth_options, depth).scoped :conditions => subtree_conditions
     end
 
     def subtree_ids depth_options = {}
