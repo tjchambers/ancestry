@@ -8,7 +8,7 @@
     <ignored path=".idea/workspace.xml" />
     <file path="/Dummy.txt" changelist="6771b3ca-9ccc-4dc4-97e0-33ff940eadc5" time="1370433569196" ignored="false" />
     <file path="/has_ancestry.rb" changelist="6771b3ca-9ccc-4dc4-97e0-33ff940eadc5" time="1370434445082" ignored="false" />
-    <file path="/instance_methods.rb" changelist="6771b3ca-9ccc-4dc4-97e0-33ff940eadc5" time="1370436735179" ignored="false" />
+    <file path="/instance_methods.rb" changelist="6771b3ca-9ccc-4dc4-97e0-33ff940eadc5" time="1370437076206" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +40,7 @@
       <file leaf-file-name="instance_methods.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/ancestry/instance_methods.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="57" column="32" selection-start="2314" selection-end="2314" vertical-scroll-proportion="0.54545456">
+            <state line="17" column="14" selection-start="843" selection-end="878" vertical-scroll-proportion="0.36363637">
               <folding />
             </state>
           </provider>
@@ -429,7 +429,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/ancestry/instance_methods.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="32" selection-start="2314" selection-end="2314" vertical-scroll-proportion="0.54545456">
+        <state line="17" column="14" selection-start="843" selection-end="878" vertical-scroll-proportion="0.36363637">
           <folding />
         </state>
       </provider>

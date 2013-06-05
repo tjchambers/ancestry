@@ -15,14 +15,16 @@ module Ancestry
           unscoped_descendants.each do |descendant|
             # ... replace old ancestry with new ancestry
             descendant.without_ancestry_callbacks do
+              column = self.class.ancestry_column
+              v = read_attribute(column)
               descendant.update_attribute(
-                  self.base_class.ancestry_column,
+                  column,
                   descendant.read_attribute(descendant.class.ancestry_column).gsub(
                       /^#{self.child_ancestry}/,
-                      if read_attribute(self.class.ancestry_column).blank? then
+                      if v.blank? then
                         id.to_s
                       else
-                        "#{read_attribute self.class.ancestry_column }/#{id}"
+                        "#{v}/#{id}"
                       end
                   )
               )
