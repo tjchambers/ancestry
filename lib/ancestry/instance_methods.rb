@@ -52,7 +52,7 @@ module Ancestry
           elsif self.base_class.orphan_strategy == :adopt
             descendants.all.each do |descendant|
               descendant.without_ancestry_callbacks do
-                new_ancestry = descendant.ancestor_ids.delete_if { |x| x == self.id }.join("/")
+                new_ancestry = descendant.ancestor_ids.delete_if { |x| x == self.id }.join('/')
                 descendant.update_attribute descendant.class.ancestry_column, new_ancestry || nil
               end
             end
@@ -81,7 +81,7 @@ module Ancestry
       {self.base_class.primary_key => ancestor_ids}
     end
 
-    def ancestors depth_options = {}
+    def ancestors(depth_options = {})
       self.base_class.scope_depth(depth_options, depth).scoped :conditions => ancestor_conditions
     end
 
@@ -93,7 +93,7 @@ module Ancestry
       {self.base_class.primary_key => path_ids}
     end
 
-    def path depth_options = {}
+    def path(depth_options = {})
       self.base_class.scope_depth(depth_options, depth).scoped :conditions => path_conditions
     end
 
@@ -105,7 +105,7 @@ module Ancestry
       {self.base_class.primary_key => lineage_ids}
     end
 
-    def lineage depth_options = {}
+    def lineage(depth_options = {})
       self.base_class.scope_depth(depth_options, depth).scoped :conditions => lineage_conditions
     end
 
@@ -118,12 +118,20 @@ module Ancestry
     end
 
     # Parent
-    def parent= parent
-      write_attribute(self.base_class.ancestry_column, if parent.blank? then nil else parent.child_ancestry end)
+    def parent=(parent)
+      write_attribute(self.base_class.ancestry_column, if parent.blank? then
+                                                         nil
+                                                       else
+                                                         parent.child_ancestry
+                                                       end)
     end
 
-    def parent_id= parent_id
-      self.parent = if parent_id.blank? then nil else unscoped_find(parent_id) end
+    def parent_id=(parent_id)
+      self.parent = if parent_id.blank? then
+                      nil
+                    else
+                      unscoped_find(parent_id)
+                    end
     end
 
     def branches
@@ -167,11 +175,11 @@ module Ancestry
         or #{column} = ?", "#{lookup}","#{lookup}/%", "#{lookup},%", ",#{id}", "#{id}"]
     end
 
-    def descendants depth_options = {}
+    def descendants(depth_options = {})
       self.base_class.scope_depth(depth_options, depth).scoped :conditions => descendant_conditions
     end
 
-    def descendant_ids depth_options = {}
+    def descendant_ids(depth_options = {})
       descendants(depth_options).all(:select => self.base_class.primary_key).collect(&self.base_class.primary_key.to_sym)
     end
 
@@ -187,11 +195,11 @@ module Ancestry
         or #{self.base_class.table_name}.#{self.base_class.primary_key} = ?", "#{lookup}","#{lookup}/%", "#{lookup},%", ",#{id}", "#{id}", "#{id}"]
      end
 
-    def subtree depth_options = {}
+    def subtree(depth_options = {})
       self.base_class.scope_depth(depth_options, depth).scoped :conditions => subtree_conditions
     end
 
-    def subtree_ids depth_options = {}
+    def subtree_ids(depth_options = {})
       subtree(depth_options).all(:select => self.base_class.primary_key).collect(&self.base_class.primary_key.to_sym)
     end
 
@@ -231,7 +239,7 @@ module Ancestry
       ancestry.nil? || (ancestry.to_s =~ Ancestry::ANCESTRY_PATTERN && !ancestor_ids.include?(self.id))
     end
     
-    def unscoped_find id
+    def unscoped_find(id)
       self.base_class.unscoped { self.base_class.find(id) }
     end
   end
