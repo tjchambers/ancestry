@@ -180,7 +180,7 @@ module Ancestry
     end
 
     def descendant_ids(depth_options = {})
-      descendants(depth_options).all(:select => self.base_class.primary_key).collect(&self.base_class.primary_key.to_sym)
+      id_selector(descendants(depth_options))
     end
 
     # Subtree
@@ -200,7 +200,7 @@ module Ancestry
     end
 
     def subtree_ids(depth_options = {})
-      subtree(depth_options).all(:select => self.base_class.primary_key).collect(&self.base_class.primary_key.to_sym)
+      id_selector(subtree(depth_options))
     end
 
     # Callback disabling
@@ -215,6 +215,10 @@ module Ancestry
     end
 
   private
+
+    def id_selector(starting_point)
+      starting_point.all(:select => self.base_class.primary_key).collect(&self.base_class.primary_key.to_sym)
+    end
 
     def cast_primary_key(key)
       if primary_key_type == :string

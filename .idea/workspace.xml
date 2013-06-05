@@ -2,15 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6771b3ca-9ccc-4dc4-97e0-33ff940eadc5" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/ancestry/class_methods.rb" afterPath="$PROJECT_DIR$/lib/ancestry/class_methods.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/ancestry/has_ancestry.rb" afterPath="$PROJECT_DIR$/lib/ancestry/has_ancestry.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/has_ancestry_test.rb" afterPath="$PROJECT_DIR$/test/has_ancestry_test.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/ancestry/instance_methods.rb" afterPath="$PROJECT_DIR$/lib/ancestry/instance_methods.rb" />
     </list>
     <ignored path="ancestry.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="/Dummy.txt" changelist="6771b3ca-9ccc-4dc4-97e0-33ff940eadc5" time="1370433569196" ignored="false" />
     <file path="/has_ancestry.rb" changelist="6771b3ca-9ccc-4dc4-97e0-33ff940eadc5" time="1370434445082" ignored="false" />
+    <file path="/instance_methods.rb" changelist="6771b3ca-9ccc-4dc4-97e0-33ff940eadc5" time="1370436338027" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,10 +28,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="class_methods.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="class_methods.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/ancestry/class_methods.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="60" column="12" selection-start="1505" selection-end="2333" vertical-scroll-proportion="-0.59090906">
+            <state line="60" column="12" selection-start="1505" selection-end="2333" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="instance_methods.rb" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/lib/ancestry/instance_methods.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="181" column="51" selection-start="6494" selection-end="6494" vertical-scroll-proportion="-1.3181819">
               <folding />
             </state>
           </provider>
@@ -78,6 +85,7 @@
         <option value="$PROJECT_DIR$/test/has_ancestry_test.rb" />
         <option value="$PROJECT_DIR$/lib/ancestry/class_methods.rb" />
         <option value="$PROJECT_DIR$/lib/ancestry/has_ancestry.rb" />
+        <option value="$PROJECT_DIR$/lib/ancestry/instance_methods.rb" />
       </list>
     </option>
   </component>
@@ -315,7 +323,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="10" y="22" width="1346" height="697" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -329,7 +337,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.69166666" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.30833334" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.30833334" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -414,7 +422,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/ancestry/class_methods.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="60" column="12" selection-start="1505" selection-end="2333" vertical-scroll-proportion="-0.59090906">
+        <state line="60" column="12" selection-start="1505" selection-end="2333" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/ancestry/instance_methods.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="181" column="51" selection-start="6494" selection-end="6494" vertical-scroll-proportion="-1.3181819">
           <folding />
         </state>
       </provider>
