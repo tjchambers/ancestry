@@ -263,19 +263,6 @@ class HasAncestryTreeTest < ActiveSupport::TestCase
     end
   end
 
-  def test_orphan_rootify_strategy
-    AncestryTestDatabase.with_model :depth => 3, :width => 3 do |model, roots|
-      model.orphan_strategy = :rootify
-      root = roots.first.first
-      children = root.children.all
-      root.destroy
-      children.each do |child|
-        child.reload
-        assert child.is_root?
-        assert_equal 3, child.children.size
-      end
-    end
-  end
 
   def test_orphan_destroy_strategy
     AncestryTestDatabase.with_model :depth => 3, :width => 3 do |model, roots|
@@ -291,35 +278,6 @@ class HasAncestryTreeTest < ActiveSupport::TestCase
     end
   end
 
-  def test_orphan_restrict_strategy
-    AncestryTestDatabase.with_model :depth => 3, :width => 3 do |model, roots|
-      model.orphan_strategy = :restrict
-      root = roots.first.first
-      assert_raise Ancestry::AncestryException do
-        root.destroy
-      end
-      assert_nothing_raised Ancestry::AncestryException do
-        root.children.first.children.first.destroy
-      end
-    end
-  end
-  
-  def test_orphan_adopt_strategy
-    AncestryTestDatabase.with_model do |model|
-      model.orphan_strategy = :adopt  # set the orphan strategy as paerntify
-      n1 = model.create!                  #create a root node
-      n2 = model.create!(:parent => n1)   #create child with parent=root
-      n3 = model.create!(:parent => n2)   #create child with parent=n2, depth = 2
-      n4 = model.create!(:parent => n2)   #create child with parent=n2, depth = 2
-      n5 = model.create!(:parent => n4)   #create child with parent=n4, depth = 3
-      n2.destroy                          # delete a node with desecendants
-      assert_equal(model.find(n3.id).parent,n1, "orphan's not parentified" )
-      assert_equal(model.find(n5.id).ancestor_ids,[n1.id,n4.id], "ancestry integrity not maintained")
-      n1.destroy                          # delete a root node with desecendants
-      assert_equal(model.find(n3.id).parent_id,nil," Children of the deleted root not rootfied")
-      assert_equal(model.find(n5.id).ancestor_ids,[n4.id],"ancestry integrity not maintained")
-    end
-  end
 
   def test_integrity_checking
     AncestryTestDatabase.with_model :width => 3, :depth => 3 do |model, roots|
