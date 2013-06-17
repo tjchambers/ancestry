@@ -71,7 +71,7 @@ module Ancestry
     end
 
     def ancestors(depth_options = {})
-      self.base_class.scope_depth(depth_options, depth).scoped :conditions => ancestor_conditions
+      self.base_class.scope_depth(depth_options, depth).where(ancestor_conditions)
     end
 
     def path_ids
@@ -83,7 +83,7 @@ module Ancestry
     end
 
     def path(depth_options = {})
-      self.base_class.scope_depth(depth_options, depth).scoped :conditions => path_conditions
+      self.base_class.scope_depth(depth_options, depth).where(path_conditions)
     end
 
     def lineage_ids
@@ -95,7 +95,7 @@ module Ancestry
     end
 
     def lineage(depth_options = {})
-      self.base_class.scope_depth(depth_options, depth).scoped :conditions => lineage_conditions
+      self.base_class.scope_depth(depth_options, depth).where(lineage_conditions)
     end
 
     def depth
@@ -189,7 +189,7 @@ module Ancestry
     end
 
     def descendants(depth_options = {})
-      self.base_class.scope_depth(depth_options, depth).scoped :conditions => descendant_conditions
+      self.base_class.scope_depth(depth_options, depth).where(descendant_conditions)
     end
 
     def descendant_ids(depth_options = {})
@@ -213,7 +213,7 @@ module Ancestry
     end
 
     def subtree(depth_options = {})
-      self.base_class.scope_depth(depth_options, depth).scoped :conditions => subtree_conditions
+      self.base_class.scope_depth(depth_options, depth).where(subtree_conditions)
     end
 
     def subtree_ids(depth_options = {})
@@ -234,7 +234,7 @@ module Ancestry
     private
 
     def id_selector(starting_point)
-      starting_point.all(:select => self.base_class.primary_key).collect(&self.base_class.primary_key.to_sym)
+      starting_point.pluck(self.base_class.primary_key.to_sym)
     end
 
     def cast_primary_key(key)
@@ -251,7 +251,7 @@ module Ancestry
 
     def unscoped_descendants
       self.base_class.unscoped do
-        self.base_class.all(:conditions => descendant_conditions)
+        self.base_class.where(descendant_conditions)
       end
     end
 
