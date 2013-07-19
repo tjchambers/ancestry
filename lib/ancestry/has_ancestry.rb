@@ -59,13 +59,7 @@ class << ActiveRecord::Base
       validates_numericality_of depth_cache_column, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => false
     end
 
-    # Create named scopes for depth
-    {:before_depth => '<', :to_depth => '<=', :at_depth => '=', :from_depth => '>=', :after_depth => '>'}.each do |scope_name, operator|
-      scope scope_name, lambda { |depth|
-        raise Ancestry::AncestryException.new("Named scope '#{scope_name}' is only available when depth caching is enabled.") unless options[:cache_depth]
-        {:conditions => ["#{depth_cache_column} #{operator} ?", depth]}
-      }
-    end
+    
   end
 
   # Alias has_ancestry with acts_as_tree, if it's available.
