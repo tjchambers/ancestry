@@ -90,8 +90,12 @@ class HasAncestryTreeTest < ActiveSupport::TestCase
         assert_equal [lvl0_node], lvl0_node.path
         assert_equal 0, lvl0_node.depth
         # Parent assertions
-     
         assert_equal nil, lvl0_node.parents
+
+        # lineage assertions
+        assert_equal lvl0_node.subtree_ids, lvl0_node.lineage_ids
+        assert_equal lvl0_node.subtree.to_a, lvl0_node.lineage.to_a
+
         # Root assertions
         assert_equal lvl0_node.id, lvl0_node.root_id
         assert_equal lvl0_node, lvl0_node.root
@@ -113,6 +117,10 @@ class HasAncestryTreeTest < ActiveSupport::TestCase
           assert_equal [lvl0_node.id, lvl1_node.id], lvl1_node.path_ids
           assert_equal [lvl0_node, lvl1_node], lvl1_node.path
           assert_equal 1, lvl1_node.depth
+
+          # lineage assertions
+      
+
           # Parent assertions
           
           assert_equal lvl0_node, lvl1_node.parents.first

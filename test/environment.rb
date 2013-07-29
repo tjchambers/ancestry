@@ -1,12 +1,11 @@
+require 'coveralls'
+Coveralls.wear!
+
 require 'rubygems'
 
 require 'active_record'
 require 'active_support/test_case'
 require 'test/unit'
-
-require 'coveralls'
-Coveralls.wear!
-
 
 # this is to make absolutely sure we test this one, not the one
 # installed on the system.
@@ -41,7 +40,9 @@ class AncestryTestDatabase
       const_set model_name, model
 
       model.table_name = 'test_nodes'
-      model.send :default_scope, default_scope_params if default_scope_params.present?
+      if default_scope_params.present?
+        model.send :default_scope, -> { default_scope_params }
+      end
 
       model.has_ancestry options unless options.delete(:skip_ancestry)
 

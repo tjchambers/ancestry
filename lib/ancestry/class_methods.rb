@@ -68,33 +68,7 @@ module Ancestry
       end
     end
  
-
     
-    # Build ancestry from parent id's for migration purposes
-    def build_ancestry_from_parent_ids!(parent_id = nil, ancestry = nil)
-      self.base_class.unscoped do
-        self.base_class.where(parent_id: parent_id).find_each  do |node|
-          node.without_ancestry_callbacks do
-            node.update_attribute ancestry_column, ancestry
-          end
-          build_ancestry_from_parent_ids! node.id, if ancestry.nil? then
-                                                     "#{node.id}"
-                                                   else
-                                                     "#{ancestry}/#{node.id}"
-                                                   end
-        end
-      end
-    end
     
-    # Rebuild depth cache if it got corrupted or if depth caching was just turned on
-    def rebuild_depth_cache!
-      raise Ancestry::AncestryException.new('Cannot rebuild depth cache for model without depth caching.') unless respond_to? :depth_cache_column
-      
-      self.base_class.unscoped do 
-        self.base_class.find_each do |node|
-          node.update_attribute depth_cache_column, node.depth
-        end
-      end
-    end
   end
 end
