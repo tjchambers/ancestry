@@ -1,26 +1,23 @@
 require 'rubygems'
 
-if ENV['ar'].nil?
-  gem 'activerecord'
-else 
-  gem 'activerecord', ENV['ar']
-end
-
 require 'active_record'
 require 'active_support/test_case'
 require 'test/unit'
 
+require 'coveralls'
+Coveralls.wear!
+
+
 # this is to make absolutely sure we test this one, not the one
 # installed on the system.
 require File.expand_path('../../lib/ancestry', __FILE__)
-
-require 'debugger' if RUBY_VERSION =~ /\A1.9/
+ 
 
 class AncestryTestDatabase
   def self.setup
-    ActiveRecord::Base.logger = ActiveSupport::BufferedLogger.new('log/test.log')
-    ActiveRecord::Base.establish_connection YAML.load(File.open(File.join(File.dirname(__FILE__), 'database.yml')).read)[ENV['db'] || 'sqlite3']
-  end
+    #ActiveRecord::Base.logger = ActiveSupport::BufferedLogger.new('log/test.log')
+     ActiveRecord::Base.establish_connection YAML.load_file(File.expand_path('../../config/database.yml', __FILE__))['test']
+   end
 
   def self.with_model options = {}
     depth                = options.delete(:depth) || 0

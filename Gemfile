@@ -2,6 +2,8 @@ source 'http://rubygems.org'
 
 gemspec
 
+gem 'coveralls', :require => false
+
 group :development, :test do
   gem 'debugger' if RUBY_VERSION =~ /\A1.9/
 end
@@ -9,9 +11,7 @@ end
 group :development do
   gem 'rdoc'
 end
-
-group :test do
-  gem 'sqlite3'
-  gem 'pg'
-  gem 'mysql'
-end
+ 
+gem 'sqlite3'
+  
+ 

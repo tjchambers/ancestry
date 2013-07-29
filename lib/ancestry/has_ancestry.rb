@@ -34,11 +34,11 @@ class << ActiveRecord::Base
 
     # Named scopes
     scope :roots, -> { where(ancestry_column => nil) }
-    scope :ancestors_of, lambda { |object| {:conditions => to_node(object).ancestor_conditions} }
-    scope :descendants_of, lambda { |object| {:conditions => to_node(object).descendant_conditions} }
-    scope :subtree_of, lambda { |object| {:conditions => to_node(object).subtree_conditions} }
+    scope :ancestors_of, ->(object) { where(to_node(object).ancestor_conditions) }
+    scope :descendants_of, ->(object) {where(to_node(object).descendant_conditions) }
+    scope :subtree_of, ->(object) {where(to_node(object).subtree_conditions) }
     scope :ordered_by_ancestry, -> { reorder("(case when #{table_name}.#{ancestry_column} is null then 0 else 1 end), #{table_name}.#{ancestry_column}") }
-    scope :ordered_by_ancestry_and, lambda { |order| reorder("(case when #{table_name}.#{ancestry_column} is null then 0 else 1 end), #{table_name}.#{ancestry_column}, #{order}") }
+    scope :ordered_by_ancestry_and, ->(order) { reorder("(case when #{table_name}.#{ancestry_column} is null then 0 else 1 end), #{table_name}.#{ancestry_column}, #{order}") }
 
     # Update descendants with new ancestry before save
     before_save :update_descendants_with_new_ancestry
@@ -62,8 +62,5 @@ class << ActiveRecord::Base
     
   end
 
-  # Alias has_ancestry with acts_as_tree, if it's available.
-  unless defined?(ActsAsTree)
-    alias_method :acts_as_tree, :has_ancestry
-  end
+   
 end

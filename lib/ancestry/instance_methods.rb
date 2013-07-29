@@ -61,7 +61,7 @@ module Ancestry
       v.split(',').first + "/#{id}"
     end
 
-    # Ancestors
+    # Ancestors = all nodes above but NOT including the current ID
     def ancestor_ids
       read_attribute(self.base_class.ancestry_column).to_s.split(%r|[,/]|).uniq.map { |id| cast_primary_key(id) }
     end
@@ -74,6 +74,7 @@ module Ancestry
       self.base_class.scope_depth(depth_options, depth).where(ancestor_conditions)
     end
 
+    # Path = all nodes above and INCLUDING the current node
     def path_ids
       ancestor_ids + [id]
     end
@@ -86,6 +87,7 @@ module Ancestry
       self.base_class.scope_depth(depth_options, depth).where(path_conditions)
     end
 
+    #lineage = all nodes that are parents of the current node + current node + all descendants of the current node in the tree
     def lineage_ids
       ancestor_ids + subtree_ids
     end
@@ -99,7 +101,7 @@ module Ancestry
     end
 
     def depth
-      ancestor_ids.size
+      ancestor_ids.size # this is probably incorrect as it just counts the ancestors without regard to how layered
     end
 
     def cache_depth
@@ -123,6 +125,7 @@ module Ancestry
                     end
     end
 
+    # branches are the multiple parents of the current node
     def branches
       if ancestor_ids.empty? then
         nil
@@ -131,6 +134,7 @@ module Ancestry
       end
     end
 
+    # the immediate node ids of the parents of the current node
     def parent_ids
       if ancestor_ids.empty? then
         nil
@@ -151,7 +155,7 @@ module Ancestry
       !is_root?
     end
 
-    # Root
+    # Root - the topmost SINGULAR node of the current tree
     def root_id
       if ancestor_ids.empty? then
         id
@@ -173,7 +177,7 @@ module Ancestry
     end
 
 
-    # Descendants
+    # Descendants = all the nodes below and NOT including the current node
     def descendant_conditions
       column = "#{self.base_class.table_name}.#{self.base_class.ancestry_column}"
       lookup = if has_parent? then
@@ -196,7 +200,7 @@ module Ancestry
       id_selector(descendants(depth_options))
     end
 
-    # Subtree
+    # Subtree = all nodes below the current node INCLUDING the current node in the list
     def subtree_conditions
       column = "#{self.base_class.table_name}.#{self.base_class.ancestry_column}"
       lookup = if has_parent? then
