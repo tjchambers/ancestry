@@ -58,7 +58,7 @@ module Ancestry
       raise Ancestry::AncestryException.new('No child ancestry for new record. Save record before performing tree operations.') if new_record?
       v = "#{self.send "#{self.base_class.ancestry_column}_was"}"
       return id.to_s if v.blank?
-      v.split(',').first + "/#{id}"
+      v.split(',').map{|x| x + '/' + id.to_s}.join(',')
     end
 
     # Ancestors = all nodes above but NOT including the current ID
