@@ -170,7 +170,7 @@ class HasAncestryTreeTest < ActiveSupport::TestCase
       # Roots assertion
       assert_equal roots.map(&:first), model.roots
 
-      model.where('1=1').each do |test_node|
+      model.all.each do |test_node|
         # Assertions for ancestors_of named scope
         assert_equal test_node.ancestors.load, model.ancestors_of(test_node).load
         assert_equal test_node.ancestors, model.ancestors_of(test_node.id)
