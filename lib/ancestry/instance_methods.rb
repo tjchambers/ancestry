@@ -125,6 +125,18 @@ module Ancestry
                     end
     end
 
+    ## These were re-added to give single parent functionality
+    
+    def parent
+      if parent_id.blank? then nil else unscoped_find(parent_id) end
+    end
+
+    def parent_id
+      if ancestor_ids.empty? then nil else ancestor_ids.last end
+    end
+    
+    ## These were re-added to give single parent functionality    
+
     # branches are the multiple parents of the current node
     def branches
       if ancestor_ids.empty? then
@@ -150,11 +162,30 @@ module Ancestry
         unscoped_find(parent_ids)
       end
     end
+    
+    def parents=(new_parents)
+      ancestry = if new_parents.nil?
+                   nil
+                 else
+                   # This is for the single ID case                   
+                   # (self.base_class.find(new_parents).child_ancestry.split("/") - [self.id.to_s]).join("/")
+                   
+                   # What this does is finds the new record in the DB, gets the child_ancestry value for that new
+                   # record - which is the ancestry path of the entire tree, but that includes the ID for the current
+                   # node, so we remove the current node from the child_ancestry path, convert it back into an
+                   # ancestry-friendly string and return that entire thing.                   
+                   
+                   # This is for an list of ancestry values
+                   (new_parents.collect { |x| (self.base_class.find(x).child_ancestry.split("/") - [self.id.to_s]).join("/") }).join(",")
+                 end
+                 # binding.pry
+      write_attribute(self.base_class.ancestry_column, ancestry)
+    end
 
     def has_parent?
       !is_root?
     end
-
+    
     # Root - the topmost SINGULAR node of the current tree
     def root_id
       if ancestor_ids.empty? then
@@ -262,7 +293,8 @@ module Ancestry
     # basically validates the ancestry, but also applied if validation is
     # bypassed to determine if children should be affected
     def sane_ancestry?
-      ancestry.nil? || (ancestry.to_s =~ Ancestry::ANCESTRY_PATTERN && !ancestor_ids.include?(self.id))
+      # ancestry.nil? || (ancestry.to_s =~ Ancestry::ANCESTRY_PATTERN && !ancestor_ids.include?(self.id))
+      ancestry.nil? || (ancestry.to_s =~ Ancestry::ANCESTRY_PATTERN && !ancestor_ids.include?(self.id))      
     end
 
     def unscoped_find(id)
