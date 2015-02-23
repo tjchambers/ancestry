@@ -125,6 +125,18 @@ module Ancestry
                     end
     end
 
+    ## These were re-added to give single parent functionality
+    
+    def parent
+      if parent_id.blank? then nil else unscoped_find(parent_id) end
+    end
+
+    def parent_id
+      if ancestor_ids.empty? then nil else ancestor_ids.last end
+    end
+    
+    ## These were re-added to give single parent functionality    
+
     # branches are the multiple parents of the current node
     def branches
       if ancestor_ids.empty? then
@@ -150,11 +162,30 @@ module Ancestry
         unscoped_find(parent_ids)
       end
     end
+    
+    def parents=(new_parents)
+      ancestry = if new_parents.nil?
+                   nil
+                 else
+                   # This is for the single ID case                   
+                   # (self.base_class.find(new_parents).child_ancestry.split("/") - [self.id.to_s]).join("/")
+                   
+                   # What this does is finds the new record in the DB, gets the child_ancestry value for that new
+                   # record - which is the ancestry path of the entire tree, but that includes the ID for the current
+                   # node, so we remove the current node from the child_ancestry path, convert it back into an
+                   # ancestry-friendly string and return that entire thing.                   
+                   
+                   # This is for an list of ancestry values
+                   (new_parents.collect { |x| (self.base_class.find(x).child_ancestry.split("/") - [self.id.to_s]).join("/") }).join(",")
+                 end
+                 # binding.pry
+      write_attribute(self.base_class.ancestry_column, ancestry)
+    end
 
     def has_parent?
       !is_root?
     end
-
+    
     # Root - the topmost SINGULAR node of the current tree
     def root_id
       if ancestor_ids.empty? then
@@ -175,6 +206,56 @@ module Ancestry
     def is_root?
       read_attribute(self.base_class.ancestry_column).blank?
     end
+    
+    # Children
+
+    def child_conditions
+      t = get_arel_table
+      t[get_ancestry_column].eq(child_ancestry)
+    end
+
+    def children
+      self.base_class.where child_conditions
+    end
+
+    def child_ids
+      children.select(self.base_class.primary_key).map(&self.base_class.primary_key.to_sym)
+    end
+
+    def has_children?
+      self.children.exists?({})
+    end
+    alias_method :children?, :has_children?
+
+    def is_childless?
+      !has_children?
+    end
+    alias_method :childless?, :is_childless?
+
+    # Siblings
+
+    def sibling_conditions
+      t = get_arel_table
+      t[get_ancestry_column].eq(read_attribute(self.base_class.ancestry_column))
+    end
+
+    def siblings
+      self.base_class.where sibling_conditions
+    end
+
+    def sibling_ids
+      siblings.select(self.base_class.primary_key).collect(&self.base_class.primary_key.to_sym)
+    end
+
+    def has_siblings?
+      self.siblings.count > 1
+    end
+    alias_method :siblings?, :has_siblings?
+
+    def is_only_child?
+      !has_siblings?
+    end
+    alias_method :only_child?, :is_only_child?
 
 
     # Descendants = all the nodes below and NOT including the current node
@@ -262,11 +343,23 @@ module Ancestry
     # basically validates the ancestry, but also applied if validation is
     # bypassed to determine if children should be affected
     def sane_ancestry?
-      ancestry.nil? || (ancestry.to_s =~ Ancestry::ANCESTRY_PATTERN && !ancestor_ids.include?(self.id))
+      ancestry.nil? || (ancestry.to_s =~ Ancestry::ANCESTRY_PATTERN && !ancestor_ids.include?(self.id))      
     end
 
     def unscoped_find(id)
       self.base_class.unscoped { self.base_class.find(id) }
+    end
+    
+    def get_arel_table
+      self.base_class.arel_table
+    end
+
+    def get_primary_key_column
+      self.base_class.primary_key.to_sym
+    end
+
+    def get_ancestry_column
+      self.base_class.ancestry_column.to_sym
     end
   end
 end
