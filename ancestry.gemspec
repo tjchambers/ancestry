@@ -22,5 +22,5 @@ Gem::Specification.new do |s|
     'README.rdoc'
   ]
   
-  s.add_dependency 'activerecord', '>= 4.0.0'
+  s.add_dependency 'activerecord', '>= 4.2.0'
 end

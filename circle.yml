@@ -1,0 +1,14 @@
+machine:
+  environment:
+    CODECLIMATE_REPO_TOKEN: e5a6685f0d6b765af1f17c55a775653556e139dfe037b55a0fc0de40582d61a5
+
+  ruby:
+    version: 2.2.0
+
+database:
+  override:
+    - echo 'no db setup'
+
+test:
+  override:
+    - bundle exec rake test 
